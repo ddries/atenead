@@ -1,0 +1,26 @@
+{
+    "appId": "dev.driescode.atenead",
+    "asar": true,
+    "productName": "Atenead",
+    "directories": {
+      "output": "release/${version}"
+    },
+    "files": [
+      "dist"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [ "x64" ]
+        }
+      ],
+      "artifactName": "${name}.${os}.${ext}"
+    },
+    "nsis": {
+      "perMachine": false,
+      "deleteAppDataOnUninstall": true,
+      "installerIcon": "app.ico"
+    }
+  }
+  
