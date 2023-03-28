@@ -1,6 +1,6 @@
 {
   "name": "atenead",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "Cross-platform user-friendly app to download Atenea (UPC) courses",
   "main": "dist/main/index.cjs",
   "author": "ddries",

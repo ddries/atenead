@@ -68,7 +68,7 @@
                     />
                     <div class="h-48 bg-gray-500 w-[1px]" />
                     <div class="flex flex-col gap-2 text-white">
-                        <input v-model="username" class="bg-transparent border-2 border-gray-500 p-2 rounded-md transition duration-300 focus:outline-none focus:border-[#07b] focus:border-2" type="text" placeholder="Username or email" />
+                        <input autofocus v-model="username" class="bg-transparent border-2 border-gray-500 p-2 rounded-md transition duration-300 focus:outline-none focus:border-[#07b] focus:border-2" type="text" placeholder="Username or email" />
                         <input v-model="password" class="bg-transparent border-2 border-gray-500 p-2 rounded-md transition duration-300 focus:outline-none focus:border-[#07b] focus:border-2" type="password" placeholder="Password" />
                         <button @click="loginRequest" class="rounded-md mt-4 bg-[#07b] hover:bg-[#00588b] transition p-2 text-white">Login</button>
 
@@ -85,84 +85,108 @@
                 </div>
             </div>
 
-            <!--  My Courses page -->
-            <Transition>
-                <div class="flex flex-col w-full p-4 text-white/80" v-if="view == 1">
-                    <div class="flex gap-3 items-center mt-0">
-                        <img class="rounded-full w-10" :src="avatar" />
-                        <span>{{ name }}</span>
-                    </div>
-                    
-                    <div class="flex flex-col mt-4 gap-3 max-h-[70vh] overflow-y-auto">
-                        <div v-for="c in courses" :key="c" class="rounded-md border p-3 border-[#6c757d] cursor-pointer"> <!-- bg-[#353a44] -->
-                            <span>{{ c }}</span>
-                        </div>
-                    </div>
-
-                    <!-- Footer -->
-                    <div class="absolute flex justify-center gap-3 bottom-3 w-full">
-                        <img
-                            class="w-32 opacity-30"
-                            draggable="false"
-                            src="/images/logo.png"
-                        />
-                        <div @click="goGithub" class="flex gap-1 items-end text-center text-white text-sm opacity-30 hover:opacity-50 cursor-pointer">
-                            <img
-                                class="w-7"
-                                src="/images/github-white.png"
-                            />
-                            <span>Atenead is open source and available in Github</span>
-                        </div>
-                    </div>
-
-                    <!-- <div class="flex gap-1 mt-3 w-full h-[55vh]">
-                        <div class="flex flex-col mt-5 gap-2 w-full">
-                            <span class="font-roboto">All courses</span>
-                            <div class="flex flex-col w-full border border-[#6c757d] rounded-md p-3 gap-3 overflow-y-auto">
-                                <div v-for="c in courses" :key="c" class="rounded-md border p-1 hover:underline border-[#6c757d] cursor-pointer">
-                                    <span>{{ c }}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex flex-col mt-5 gap-2 w-full">
-                            <span class="font-roboto self-end">Download list</span>
-                            <div class="border border-[#6c757d] rounded-md p-3 overflow-y-auto">
-                                <div v-if="coursesDownload.length > 0" class="gap-3 flex flex-col w-full ">
-                                    <div v-for="c in coursesDownload" :key="c" class="rounded-md border p-1 hover:underline border-[#6c757d] cursor-pointer">
-                                        <span>{{ c }}</span>
-                                    </div>
-                                </div>
-                                <div v-else>
-                                    <p class="text-center text-gray-300">Click on some courses!</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="absolute bottom-3 left-0 w-full flex items-center justify-around">
-                        <span>Selected: 0 courses</span>
-                        <div class="flex gap-2">
-                            <button 
-                                class="flex gap-1 p-2 items-center border border-white hover:bg-[#07b] hover:border-[#07b] transition rounded-md"
-                                :class="[ coursesDownload.length <= 0 ? 'opacity-20 cursor-not-allowed hover:bg-transparent hover:border-white' : '' ]"
-                            >
-                                <svg class="fill-white w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg>
-                                <span>Download</span>
-                            </button>
-                        </div>
-                    </div> -->
+            <!-- vv Static content vv -->
+            <!-- Username header -->
+            <Transition v-if="view == 1 || view == 2">
+                <div class="flex gap-3 items-center p-4 text-white/80">
+                    <img class="rounded-full w-10" :src="avatar" />
+                    <span>{{ name }}</span>
                 </div>
             </Transition>
+
+            <!-- Footer -->
+            <Transition v-if="view == 1 || view == 2">
+                <div class="absolute flex justify-center gap-3 bottom-3 w-full">
+                    <img
+                        class="w-32 opacity-30"
+                        draggable="false"
+                        src="/images/logo.png"
+                    />
+                    <div @click="goGithub" class="flex gap-1 items-end text-center text-white text-sm opacity-30 hover:opacity-50 cursor-pointer">
+                        <img
+                            class="w-7"
+                            src="/images/github-white.png"
+                        />
+                        <span>Atenead is open source and available in Github</span>
+                    </div>
+                </div>
+            </Transition>
+            <!-- ^^ Static content ^^ -->
+
+            <!--  My Courses page -->
+            <div class="flex flex-col w-full px-4 pb-4 text-white/80" v-if="view == 1">
+                <div class="flex flex-col gap-3 max-h-[65vh] overflow-y-auto">
+                    <div
+                        v-for="c in courses"
+                        :key="c.id"
+                        class="rounded-md border p-3 border-[#6c757d] cursor-pointer"
+                        :class="[ c.selected ? 'bg-[#3b404a]': '' ]"
+                        @click="() => { c.selected = !c.selected }"
+                    >
+                        <span>{{ c.name }}</span>
+                    </div>
+                </div>
+
+                <div class="flex justify-center mt-2">
+                    <button @click="download" v-if="getSelectedCourses.length > 0" class="p-2 rounded-md bg-[#07b] hover:bg-[#00588b]">
+                        Download ({{ getSelectedCourses.length }} selected)
+                    </button>
+                    <span v-else>
+                        Click on some!
+                    </span>
+                </div>
+            </div>
+
+            <!-- Confirm download -->
+            <div class="flex flex-col w-full px-4 pb-4 text-white/80" v-if="view == 2">
+                <div class="flex flex-col gap-3 max-h-[65vh] overflow-y-auto">
+                    <div
+                        v-for="c in getSelectedCourses"
+                        :key="c.id"
+                        class="flex flex-col justify-center items-center rounded-md border p-3 border-[#6c757d]"
+                    >
+                        <span>{{ c.name }}</span>
+                        <div class="flex items-center gap-4 text-sm">
+                            <div class="flex items-center gap-3">
+                                <span>All files</span>
+                                <input type="checkbox" checked />
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span>Text files (.pdf, .txt) <small>(currently unsupported)</small></span>
+                                <input type="checkbox" disabled />
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span>Media files (.mp4, .wav) <small>(currently unsupported)</small></span>
+                                <input type="checkbox" disabled />
+                            </div>
+                            <!-- <div class="flex items-center gap-3">
+                                <span>Compress as .zip</span>
+                                <input type="checkbox" />
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-center mt-2 gap-3">
+                    <button @click="() => view = 1" class="p-2 rounded-md bg-gray-700 hover:bg-gray-700/70">
+                        Go back
+                    </button>
+                    <button @click="download" class="p-2 rounded-md bg-[#07b] hover:bg-[#00588b]">
+                        Confirm download
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref } from "vue"
+import { ref, computed } from "vue"
 
 /**
  * 0 = Login
  * 1 = My Courses
+ * 2 = Confirm download
  */
 const view = ref(0)
 const showLoader = ref(false)
@@ -177,28 +201,28 @@ const onlyPdfs = ref(true)
 const compressIntoZip = ref(false)
 
 const courses = ref([
-    // "INTERCONNEXIÓ DE XARXES (Curs Total)",
-    // "INTERCONNEXIÓ DE XARXES (Curs Total)",
-    // "INTERCONNEXIÓ DE XARXES (Curs Total)",
-    // "INTERCONNEXIÓ DE XARXES (Curs Total)",
-    // "INTERCONNEXIÓ DE XARXES (Curs Total)",
-    // "INTERCONNEXIÓ DE XARXES (Curs Total)",
-    // "INTERCONNEXIÓ DE XARXES (Curs Total)",
-    // "INTERCONNEXIÓ DE XARXES (Curs Total)",
-    // "INTERCONNEXIÓ DE XARXES (Curs Total)",
-    // "INTERCONNEXIÓ DE XARXES (Curs Total)",
-    // "INTERCONNEXIÓ DE XARXES (Curs Total)",
-    // "INTERCONNEXIÓ DE XARXES (Curs Total)",
+    {
+        name: "Example",
+        id: "1",
+        url: "https://",
+        selected: false
+    }
 ])
 
-const coursesDownload = ref([
+const getSelectedCourses = computed(() => {
+    return courses.value.filter(c => c.selected) || []
+});
 
-])
+const download = () => {
+    view.value = 2
+};
 
 bridge.on('load', (coursesStr) => {
+    courses.value = []
     const _courses = JSON.parse(coursesStr);
+
     for (const c of _courses) {
-        courses.value.push(c.name)
+        courses.value.push({ ...c, selected: false })
     }
 
     view.value = 1
