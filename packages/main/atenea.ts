@@ -20,7 +20,7 @@ type LoggedUser = {
     ssoCookie: string
 }
 
-type AteneaCourse = {
+export type AteneaCourse = {
     name: string,
     id: string,
     url: string,

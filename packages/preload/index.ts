@@ -21,6 +21,10 @@ const bridgeApi = {
         ipcRenderer.send('load');
     },
 
+    download: (courses: any[]) => {
+        ipcRenderer.send('download', JSON.stringify(courses));
+    },
+
     on: (name: AcceptedEvents, cb: (...a: any[]) => void, once: boolean = false) => {
         const _wrapper = (...args: any[]) => {
             args.shift();

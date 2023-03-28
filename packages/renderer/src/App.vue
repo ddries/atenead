@@ -42,7 +42,7 @@
                 <div @click="minimize" class="w-3 h-3 bg-yellow-500 rounded-full cursor-pointer hover:bg-yellow-600"></div>
                 <div @click="maximize" class="w-3 h-3 bg-green-500 rounded-full cursor-pointer hover:bg-green-600"></div>
             </div>
-            <p class="text-sm absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">Atenead 1.0.0-abc1234</p>
+            <p class="text-sm absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">Atenead {{ version }}</p>
         </div>
 
         <!-- Content -->
@@ -171,7 +171,7 @@
                     <button @click="() => view = 1" class="p-2 rounded-md bg-gray-700 hover:bg-gray-700/70">
                         Go back
                     </button>
-                    <button @click="download" class="p-2 rounded-md bg-[#07b] hover:bg-[#00588b]">
+                    <button @click="confirmDownload" class="p-2 rounded-md bg-[#07b] hover:bg-[#00588b]">
                         Confirm download
                     </button>
                 </div>
@@ -190,6 +190,7 @@ import { ref, computed } from "vue"
  */
 const view = ref(0)
 const showLoader = ref(false)
+const version = ref("")
 
 const username = ref("")
 const password = ref("")
@@ -216,6 +217,15 @@ const getSelectedCourses = computed(() => {
 const download = () => {
     view.value = 2
 };
+
+const confirmDownload = () => {
+    const r = getSelectedCourses.value;
+    bridge.download(r);
+};
+
+bridge.on('set-version', v => {
+    version.value = v
+});
 
 bridge.on('load', (coursesStr) => {
     courses.value = []

@@ -19,8 +19,9 @@
     },
     "nsis": {
       "perMachine": false,
-      "deleteAppDataOnUninstall": true,
-      "installerIcon": "app.ico"
-    }
+      "deleteAppDataOnUninstall": true
+    },
+
+    "beforePack": "./beforePack.js"
   }
   

@@ -1,9 +1,15 @@
 import { ipcMain, IpcMainEvent } from "electron";
 import { win as _window } from './window';
+import { version } from './index'
 
 import logger from 'electron-log';
-import { login, user, courses } from "./atenea";
+import { login, user, courses, AteneaCourse } from "./atenea";
 const log = logger.scope('ipc');
+
+const download = (_: IpcMainEvent, coursesStr: string) => {
+    const courses: AteneaCourse[] = JSON.parse(coursesStr);
+};
+ipcMain.on('download', download);
 
 const onLogin = async (_: IpcMainEvent, username: string, password: string) => {
     const b = await login(username, password);
@@ -30,4 +36,5 @@ ipcMain.on('win-minimize', (_: IpcMainEvent) => {
 
 export const loadFrontend = (): void => {
     if (!_window) return;
+    _window?.webContents.send('set-version', version);
 };
