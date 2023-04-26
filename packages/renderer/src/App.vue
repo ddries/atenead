@@ -87,7 +87,7 @@
 
             <!-- vv Static content vv -->
             <!-- Username header -->
-            <Transition v-if="view == 1 || view == 2">
+            <Transition v-if="view == 1 || view == 2 || view == 3">
                 <div class="flex gap-3 items-center p-4 text-white/80">
                     <img class="rounded-full w-10" :src="avatar" />
                     <span>{{ name }}</span>
@@ -95,7 +95,7 @@
             </Transition>
 
             <!-- Footer -->
-            <Transition v-if="view == 1 || view == 2">
+            <Transition v-if="view == 1 || view == 2 || view == 3">
                 <div class="absolute flex justify-center gap-3 bottom-3 w-full">
                     <img
                         class="w-32 opacity-30"
@@ -176,6 +176,18 @@
                     </button>
                 </div>
             </div>
+
+            <!-- Download progress -->
+            <div class="flex flex-col gap-3 justify-center items-center w-full h-full px-10 mb-20 text-white/80" v-if="view == 3">
+                <div class="flex justify-around w-full">
+                    <span>{{ downloadStatusText  }}</span>
+                    <span>{{ downloadItemText  }}</span>
+                </div>
+                <div class="w-full h-3 border border-white/40">
+                    <div class="h-full bg-green-500 transform animate-pulse" :style="[{ 'width': getDownloadPercentage + '%' }]"></div>
+                </div>
+                <span>Completed {{ downloadCompletedIndex  }} out of {{ downloadTotalIndex  }}...</span>
+            </div>
         </div>
     </div>
 </template>
@@ -187,6 +199,7 @@ import { ref, computed } from "vue"
  * 0 = Login
  * 1 = My Courses
  * 2 = Confirm download
+ * 3 = Download progress
  */
 const view = ref(0)
 const showLoader = ref(false)
@@ -201,6 +214,11 @@ const avatar = ref("")
 const onlyPdfs = ref(true)
 const compressIntoZip = ref(false)
 
+const downloadStatusText = ref("")
+const downloadItemText = ref("")
+const downloadCompletedIndex = ref(0)
+const downloadTotalIndex = ref(0)
+
 const courses = ref([
     {
         name: "Example",
@@ -214,13 +232,18 @@ const getSelectedCourses = computed(() => {
     return courses.value.filter(c => c.selected) || []
 });
 
+const getDownloadPercentage = computed(() => {
+    return 100 * downloadCompletedIndex.value / downloadTotalIndex.value
+})
+
 const download = () => {
     view.value = 2
 };
 
 const confirmDownload = () => {
     const r = getSelectedCourses.value;
-    bridge.download(r);
+    bridge.download(JSON.stringify(r));
+    view.value = 3
 };
 
 bridge.on('set-version', v => {
@@ -241,17 +264,19 @@ bridge.on('load', (coursesStr) => {
 
 const loginRequest = () => {
     bridge.on('login-response', data => {
-        data = JSON.parse(data);
-        console.log(data);
-
+        console.log(data)
         if (data) {
-            name.value = data.name
-            username.value = data.username
-            avatar.value = data.avatarUrl
-        }
+            data = JSON.parse(data);
 
-        bridge.load()
-        // showLoader.value = false
+            if (data) {
+                name.value = data.name
+                username.value = data.username
+                avatar.value = data.avatarUrl
+            }
+
+            bridge.load()
+        }
+        showLoader.value = false
     });
 
     bridge.login(username.value, password.value)

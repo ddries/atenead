@@ -8,6 +8,8 @@ const log = logger.scope('ipc');
 
 const download = (_: IpcMainEvent, coursesStr: string) => {
     const courses: AteneaCourse[] = JSON.parse(coursesStr);
+    log.info("download request=" + JSON.stringify(courses));
+    
 };
 ipcMain.on('download', download);
 
@@ -16,9 +18,13 @@ const onLogin = async (_: IpcMainEvent, username: string, password: string) => {
     log.info("login request=" + username + ", response=" + b.toString());
     
     _window?.webContents.send('login-response', !b ? null : JSON.stringify(user));
-    _window?.webContents.send('load', JSON.stringify(courses));
 };
 ipcMain.on('login-request', onLogin);
+
+const load = (_: IpcMainEvent) => {
+    _window?.webContents.send('load', JSON.stringify(courses));
+};
+ipcMain.on('load', load);
 
 ipcMain.on('win-close', (_: IpcMainEvent) => {
     _window?.close();

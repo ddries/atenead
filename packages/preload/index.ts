@@ -21,7 +21,7 @@ const bridgeApi = {
         ipcRenderer.send('load');
     },
 
-    download: (courses: any[]) => {
+    download: (courses: string) => {
         ipcRenderer.send('download', JSON.stringify(courses));
     },
 
