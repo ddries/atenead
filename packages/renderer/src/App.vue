@@ -184,7 +184,7 @@
                     <span class="text-xl text-center">{{ downloadStatusText  }}</span>
                     <span>{{ downloadItemText  }}</span>
                 </div>
-                <LvProgressBar v-if="pbMode == 'indeterminate' || downloadTotalIndex > 0" class="w-1/2 h-[1vh]" color="#07b" :mode="pbMode" :value="getDownloadPercentage" />
+                <LvProgressBar v-if="pbMode == 'indeterminate' || downloadTotalIndex > 0" class="w-1/2" color="#07b" :mode="pbMode" :value="getDownloadPercentage.toFixed(2)" />
                 <span v-if="downloadTotalIndex > 0">Completed {{ downloadCompletedIndex  }} out of {{ downloadTotalIndex  }}...</span>
             </div>
         </div>
