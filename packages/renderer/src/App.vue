@@ -180,10 +180,10 @@
             <!-- Download progress -->
             <div class="flex flex-col gap-3 justify-center items-center w-full h-full px-10 mb-20 text-white/80" v-if="view == 3">
                 <div class="flex flex-col items-center w-full">
-                    <span class="text-xl">{{ downloadStatusText  }}</span>
+                    <span class="text-xl text-center">{{ downloadStatusText  }}</span>
                     <span>{{ downloadItemText  }}</span>
                 </div>
-                <LvProgressBar class="w-1/2 h-[1vh]" color="#07b" :mode="pbMode" />
+                <LvProgressBar class="w-1/2 h-[1vh]" color="#07b" :mode="pbMode" :value="getDownloadPercentage" />
                 <span v-if="downloadTotalIndex > 0">Completed {{ downloadCompletedIndex  }} out of {{ downloadTotalIndex  }}...</span>
             </div>
         </div>

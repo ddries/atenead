@@ -17,6 +17,9 @@
       ],
       "artifactName": "${name}.${os}.${ext}"
     },
+    "mac": {
+      "target": [ "dmg", "zip" ]
+    },
     "nsis": {
       "perMachine": false,
       "deleteAppDataOnUninstall": true

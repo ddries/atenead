@@ -3,7 +3,8 @@ import { win as _window } from './window';
 import { version } from './index'
 
 import logger from 'electron-log';
-import { login, user, courses, AteneaCourse, getResourcesFromCourse, AteneaResource } from "./atenea";
+import { login, user, courses, AteneaCourse, getResourcesFromCourse, AteneaResource, ensureOk } from "./atenea";
+import { startDownload } from "./downloader";
 const log = logger.scope('ipc');
 
 const download = async (_: IpcMainEvent, coursesStr: string) => {
@@ -16,10 +17,15 @@ const download = async (_: IpcMainEvent, coursesStr: string) => {
     for (const course of courses) {
         const result = await getResourcesFromCourse(course);
         total += result.size;
-        allResources.concat(...result.list);
+
+        sendStatusText("Validating " + course.name + "...");
+        await ensureOk(result.list);
+        allResources.push(...result.list);
     }
 
+    setPbMode("determinate");
     setDownloadTotalCount(total);
+    await startDownload(allResources);
 };
 ipcMain.on('download', download);
 

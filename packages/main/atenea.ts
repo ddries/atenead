@@ -2,7 +2,7 @@ import axios from 'axios';
 import { wrapper } from 'axios-cookiejar-support';
 import { CookieJar } from 'tough-cookie';
 import { session } from 'electron';
-import sanitize from 'sanitize-filename';
+import { https } from 'follow-redirects';
 
 import url from 'url';
 import { getPage, injectHtmlToPage } from './scrapper';
@@ -39,7 +39,8 @@ export type AteneaResource = {
     name: string,
     type: ResourceType,
     directory: ResourceDir,
-    url: string
+    url: string,
+    course: AteneaCourse
 }
 
 export let user: LoggedUser | null = null;
@@ -151,8 +152,8 @@ export const getResourcesFromCourse = async (course: AteneaCourse): Promise<{ si
     await injectHtmlToPage(body, p);
     sendStatusText("Fetching " + course.name + "...");
 
-    const rootResources: AteneaResource[] = await p.evaluate(() => {
-        const res: AteneaResource[]= [];
+    const rootResources: AteneaResource[] = await p.evaluate((course: AteneaCourse) => {
+        const res: AteneaResource[] = [];
         const resources = document.querySelectorAll("li.resource div div.activity-basis div div.activity-instance div div.media-body div a");
         for (const r of resources) {
             const name = r.querySelector("span")?.firstChild?.nodeValue!;
@@ -160,13 +161,14 @@ export const getResourcesFromCourse = async (course: AteneaCourse): Promise<{ si
 
             res.push({
                 directory: "./",
-                type: "unk",
+                type: url.includes(".pdf") ? "pdf" : "unk",
                 name: name,
-                url
+                url,
+                course
             });
         }
         return res;
-    });
+    }, course);
 
     result.push(...rootResources);
 
@@ -191,7 +193,7 @@ export const getResourcesFromCourse = async (course: AteneaCourse): Promise<{ si
         ok(subdirPage != null);
 
         await injectHtmlToPage(subdirBody, subdirPage)
-        const subresources: AteneaResource[] = await subdirPage.evaluate(() => {
+        const subresources: AteneaResource[] = await subdirPage.evaluate((course: AteneaCourse) => {
             const result: AteneaResource[] = [];
             const h2Name = document.querySelector("header#page-header div div:nth-child(2) div:nth-child(1) div.page-context-header div.page-header-headings h1") as HTMLElement;
             const folderName = h2Name.innerText;
@@ -202,15 +204,37 @@ export const getResourcesFromCourse = async (course: AteneaCourse): Promise<{ si
                 const name = span.innerText;
                 const url = a.href;
                 result.push({
-                    directory: "./" + folderName.replaceAll(" ", "_"),
-                    type: 'unk',
+                    directory: folderName.replaceAll(" ", "_"),
+                    type: url.includes(".pdf") ? "pdf" : "unk",
                     name: name,
                     url,
+                    course
                 });
             }
             return result;
-        });
+        }, course);
+
+        result.push(...subresources);
     }
 
     return { size: result.length, list: result };
+}
+
+export const ensureOk = async (resources: AteneaResource[]): Promise<void> => {
+    // Check that resource names do not collide
+    for (let i = 0; i < resources.length; i++) {
+        const name = resources[i].name;
+        const dir = resources[i].directory;
+        let k = 1;
+        for (let j = 0; j < resources.length; j++) {
+            if (i == j) {
+                continue;
+            }
+
+            // On collision, change current name
+            if (resources[j].name == name && resources[j].directory == dir) {
+                resources[j].name += k++;
+            }
+        }
+    }
 }
