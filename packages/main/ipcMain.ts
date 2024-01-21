@@ -4,7 +4,7 @@ import { version } from './index'
 import fs from 'fs';
 import logger from 'electron-log';
 import { login, user, courses, AteneaCourse, getResourcesFromCourse, AteneaResource, ensureOk } from "./atenea";
-import { DOWNLOAD_DIR, setDownloadDir, startDownload } from "./downloader";
+import { setDownloadDir, startDownload } from "./downloader";
 const log = logger.scope('ipc');
 
 const download = async (_: IpcMainEvent, coursesStr: string) => {
