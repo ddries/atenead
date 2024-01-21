@@ -24,7 +24,7 @@ export let version: string = "";
   createWindowIfNotExists();
   logger.info('app ready window open');
 
-  version = app.getVersion() + "-" + pjson.commit;
+  version = pjson.commit;
 
   await resolveOnWindowReady();
   logger.info('window ready');

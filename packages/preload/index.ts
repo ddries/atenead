@@ -22,7 +22,7 @@ const bridgeApi = {
     },
 
     download: (courses: string) => {
-        ipcRenderer.send('download', JSON.stringify(courses));
+        ipcRenderer.send('download', courses);
     },
 
     on: (name: AcceptedEvents, cb: (...a: any[]) => void, once: boolean = false) => {

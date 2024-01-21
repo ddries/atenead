@@ -176,17 +176,15 @@
                     </button>
                 </div>
             </div>
-
+            
             <!-- Download progress -->
             <div class="flex flex-col gap-3 justify-center items-center w-full h-full px-10 mb-20 text-white/80" v-if="view == 3">
-                <div class="flex justify-around w-full">
-                    <span>{{ downloadStatusText  }}</span>
+                <div class="flex flex-col items-center w-full">
+                    <span class="text-xl">{{ downloadStatusText  }}</span>
                     <span>{{ downloadItemText  }}</span>
                 </div>
-                <div class="w-full h-3 border border-white/40">
-                    <div class="h-full bg-green-500 transform animate-pulse" :style="[{ 'width': getDownloadPercentage + '%' }]"></div>
-                </div>
-                <span>Completed {{ downloadCompletedIndex  }} out of {{ downloadTotalIndex  }}...</span>
+                <LvProgressBar class="w-1/2 h-[1vh]" color="#07b" :mode="pbMode" />
+                <span v-if="downloadTotalIndex > 0">Completed {{ downloadCompletedIndex  }} out of {{ downloadTotalIndex  }}...</span>
             </div>
         </div>
     </div>
@@ -194,6 +192,7 @@
 
 <script setup>
 import { ref, computed } from "vue"
+import LvProgressBar from 'lightvue/progress-bar'
 
 /**
  * 0 = Login
@@ -214,10 +213,11 @@ const avatar = ref("")
 const onlyPdfs = ref(true)
 const compressIntoZip = ref(false)
 
-const downloadStatusText = ref("")
+const downloadStatusText = ref("Loading...")
 const downloadItemText = ref("")
 const downloadCompletedIndex = ref(0)
 const downloadTotalIndex = ref(0)
+const pbMode = ref("indeterminate")
 
 const courses = ref([
     {
@@ -245,6 +245,26 @@ const confirmDownload = () => {
     bridge.download(JSON.stringify(r));
     view.value = 3
 };
+
+bridge.on('set-download-total-count', (count) => {
+    downloadTotalIndex.value = count
+})
+
+bridge.on('increment-download-count', () => {
+    downloadCompletedIndex.value++
+})
+
+bridge.on('set-pb-mode', mode => {
+    pbMode.value = mode
+})
+
+bridge.on('set-status-text', txt => {
+    downloadStatusText.value = txt
+});
+
+bridge.on('set-item-text', txt => {
+    downloadItemText.value = txt
+})
 
 bridge.on('set-version', v => {
     version.value = v
