@@ -17,6 +17,14 @@
       ],
       "artifactName": "${name}.${os}.${ext}"
     },
+    "publish": [
+      {
+        "provider": "github",
+        "repo": "atenead",
+        "owner": "ddries",
+        "releaseType": "release"
+      }
+    ],
     "mac": {
       "target": [ "dmg", "zip" ]
     },

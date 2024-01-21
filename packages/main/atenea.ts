@@ -150,7 +150,6 @@ export const getResourcesFromCourse = async (course: AteneaCourse): Promise<{ si
     ok(p != null);
 
     await injectHtmlToPage(body, p);
-    sendStatusText("Fetching " + course.name + "...");
 
     const rootResources: AteneaResource[] = await p.evaluate((course: AteneaCourse) => {
         const res: AteneaResource[] = [];

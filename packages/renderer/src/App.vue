@@ -179,11 +179,12 @@
             
             <!-- Download progress -->
             <div class="flex flex-col gap-3 justify-center items-center w-full h-full px-10 mb-20 text-white/80" v-if="view == 3">
+                <img width="350" src="https://i.pinimg.com/originals/e7/7a/1e/e77a1e25a95370f4f625c115f1622378.gif" />
                 <div class="flex flex-col items-center w-full">
                     <span class="text-xl text-center">{{ downloadStatusText  }}</span>
                     <span>{{ downloadItemText  }}</span>
                 </div>
-                <LvProgressBar class="w-1/2 h-[1vh]" color="#07b" :mode="pbMode" :value="getDownloadPercentage" />
+                <LvProgressBar v-if="pbMode == 'indeterminate' || downloadTotalIndex > 0" class="w-1/2 h-[1vh]" color="#07b" :mode="pbMode" :value="getDownloadPercentage" />
                 <span v-if="downloadTotalIndex > 0">Completed {{ downloadCompletedIndex  }} out of {{ downloadTotalIndex  }}...</span>
             </div>
         </div>
@@ -269,6 +270,10 @@ bridge.on('set-item-text', txt => {
 bridge.on('set-version', v => {
     version.value = v
 });
+
+bridge.on('view', v => {
+    view.value = v
+})
 
 bridge.on('load', (coursesStr) => {
     courses.value = []

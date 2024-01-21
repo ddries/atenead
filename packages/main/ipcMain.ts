@@ -1,24 +1,39 @@
-import { ipcMain, IpcMainEvent } from "electron";
+import { dialog, ipcMain, IpcMainEvent } from "electron";
 import { win as _window } from './window';
 import { version } from './index'
-
+import fs from 'fs';
 import logger from 'electron-log';
 import { login, user, courses, AteneaCourse, getResourcesFromCourse, AteneaResource, ensureOk } from "./atenea";
-import { startDownload } from "./downloader";
+import { DOWNLOAD_DIR, setDownloadDir, startDownload } from "./downloader";
 const log = logger.scope('ipc');
 
 const download = async (_: IpcMainEvent, coursesStr: string) => {
     const allResources: AteneaResource[] = [];
     let total = 0;
 
+    const result = dialog.showOpenDialogSync(_window!, { properties: [ "openDirectory" ], title: "Atenea download directory" });
+    if (!result) {
+        dialog.showErrorBox("Atenead", "Please select a valid directory to save downloads");
+        _window?.webContents.send('view', 2);
+        return;
+    }
+
+    if (result.length > 1) {
+        dialog.showErrorBox("Atenead", "Please select a valid directory to save downloads");
+        _window?.webContents.send('view', 2);
+        return;
+    }
+
+    setDownloadDir(result[0]);
+
     const courses: AteneaCourse[] = JSON.parse(coursesStr);
     log.info("download request=" + JSON.stringify(courses));
 
     for (const course of courses) {
+        sendStatusText("Fetching " + course.name + "...");
         const result = await getResourcesFromCourse(course);
         total += result.size;
 
-        sendStatusText("Validating " + course.name + "...");
         await ensureOk(result.list);
         allResources.push(...result.list);
     }
@@ -26,6 +41,10 @@ const download = async (_: IpcMainEvent, coursesStr: string) => {
     setPbMode("determinate");
     setDownloadTotalCount(total);
     await startDownload(allResources);
+
+    sendStatusText("Completed!");
+    sendItemText("");
+    setDownloadTotalCount(0);
 };
 ipcMain.on('download', download);
 

@@ -1,15 +1,21 @@
-import { courses, AteneaCourse, AteneaResource, user } from "./atenea";
+import { AteneaResource, user } from "./atenea";
 import bluebird from 'bluebird';
 import { https } from 'follow-redirects';
 import fs from 'fs';
 import path from 'path'
+import { win as _window } from './window';
 import sanitize from "sanitize-filename";
 import { incrementDownloadCount, sendItemText, sendStatusText, setDownloadTotalCount } from "./ipcMain";
+import { dialog } from 'electron';
 import logger from 'electron-log';
 const log = logger.scope('downloader');
 
-const DOWNLOAD_DIR = "./atenead-download";
+let DOWNLOAD_DIR = "";
 let dataMetric = 0;
+
+export const setDownloadDir = (downloadDir: string): void => {
+    DOWNLOAD_DIR = downloadDir;
+}
 
 function downloadResource(resource: AteneaResource): Promise<void> {
     return new Promise<void>(async (res, rej) => {
@@ -37,7 +43,7 @@ function downloadResource(resource: AteneaResource): Promise<void> {
             f.on('finish', () => {
                 f.close();
                 incrementDownloadCount();
-                sendStatusText("Downloaded " + resource.name);
+                sendStatusText(resource.name);
                 log.info(fpath);
                 res();
             });
@@ -61,7 +67,4 @@ export const startDownload = async (resources: AteneaResource[]): Promise<void> 
     
     await bluebird.Promise.map(resources, downloadResource, { concurrency: 200 });
     clearInterval(i);
-    sendStatusText("Completed!");
-    sendItemText("");
-    setDownloadTotalCount(0);
 }

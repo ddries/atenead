@@ -36,7 +36,6 @@ export const createWindowIfNotExists = () => {
         minHeight: constants.WINDOW_HEIGHT,
         minWidth: constants.WINDOW_WIDTH,
         title: constants.WINDOW_TITLE,
-        // icon: join(__dirname, Config.WINDOW_ICON),
 
         resizable: true,
         show: false,
