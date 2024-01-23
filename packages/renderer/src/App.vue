@@ -187,6 +187,12 @@
                 <LvProgressBar v-if="pbMode == 'indeterminate' || downloadTotalIndex > 0" class="w-1/2" color="#07b" :mode="pbMode" :value="getDownloadPercentage.toFixed(2)" />
                 <span v-if="downloadTotalIndex > 0">Completed {{ downloadCompletedIndex  }} out of {{ downloadTotalIndex  }}...</span>
             </div>
+
+            <!-- Update check -->
+            <div class="flex flex-col gap-3 justify-center items-center h-full w-full text-white" v-if="view == 4">
+                <span class="text-xl">{{ pbUpdateLabel }}</span>
+                <LvProgressBar :mode="pbUpdateMode" :value="pbUpdateProgress" class="w-1/2" color="#07b" />
+            </div>
         </div>
     </div>
 </template>
@@ -200,8 +206,9 @@ import LvProgressBar from 'lightvue/progress-bar'
  * 1 = My Courses
  * 2 = Confirm download
  * 3 = Download progress
+ * 4 = Check for updates
  */
-const view = ref(0)
+const view = ref(4)
 const showLoader = ref(false)
 const version = ref("")
 
@@ -219,6 +226,10 @@ const downloadItemText = ref("")
 const downloadCompletedIndex = ref(0)
 const downloadTotalIndex = ref(0)
 const pbMode = ref("indeterminate")
+
+const pbUpdateMode = ref("indeterminate")
+const pbUpdateProgress = ref(0);
+const pbUpdateLabel = ref("Checking for updates");
 
 const courses = ref([
     {
@@ -257,6 +268,18 @@ bridge.on('increment-download-count', () => {
 
 bridge.on('set-pb-mode', mode => {
     pbMode.value = mode
+})
+
+bridge.on('set-update-mode', mode => {
+    pbUpdateMode.value = mode
+})
+
+bridge.on('set-update-progress', progress => {
+    pbUpdateProgress.value = progress
+})
+
+bridge.on('set-update-label', label => {
+    pbUpdateLabel.value = label
 })
 
 bridge.on('set-status-text', txt => {

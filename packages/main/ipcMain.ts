@@ -104,3 +104,23 @@ export const setPbMode = (mode: 'indeterminate' | 'determinate') => {
     if (!_window) return;
     _window?.webContents.send('set-pb-mode', mode);
 };
+
+export const setView = (view: number) => {
+    if (!_window) return;
+    _window?.webContents.send('view', view);
+}
+
+export const setUpdatePbMode = (mode: 'indeterminate' | 'determinate') => {
+    if (!_window) return;
+    _window?.webContents.send('set-update-mode', mode);
+}
+
+export const setUpdateProgress = (progress: number) => {
+    if (!_window) return;
+    _window?.webContents.send('set-update-progress', progress);
+}
+
+export const setUpdateLabel = (label: string) => {
+    if (!_window) return;
+    _window?.webContents.send('set-update-label', label);
+}

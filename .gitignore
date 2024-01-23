@@ -2,4 +2,6 @@ dist/
 node_modules/
 release/
 
+.DS_Store
+
 electron-builder_dev.json

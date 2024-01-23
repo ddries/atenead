@@ -7,7 +7,6 @@ let browser: Browser | null = null;
 export const initialize = async () => {
     log.info('creating scrapper');
     browser = await puppeteer.launch({
-        headless: true,
         ignoreHTTPSErrors: true,
         args: [ '--disable-setuid-sandbox' ]
     });  
