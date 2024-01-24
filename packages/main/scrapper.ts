@@ -1,4 +1,4 @@
-import puppeteer, { Browser, Page } from "puppeteer";
+import puppeteer, { Browser, Page } from "puppeteer-core";
 import logger from 'electron-log';
 const log = logger.scope('scrapper');
 
@@ -7,6 +7,8 @@ let browser: Browser | null = null;
 export const initialize = async () => {
     log.info('creating scrapper');
     browser = await puppeteer.launch({
+        headless: "new",
+        channel: "chrome",
         ignoreHTTPSErrors: true,
         args: [ '--disable-setuid-sandbox' ]
     });  
