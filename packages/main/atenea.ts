@@ -76,7 +76,7 @@ export const login = async (username: string, password: string): Promise<boolean
 
     const d = await p.evaluate(() => {
         // const name = (document.querySelector("span .usertext") as HTMLSpanElement).innerHTML!;
-        const el = document.querySelector("#page-header div div.align-items-center h2") as HTMLElement;
+        const el = document.querySelector("#page-header div div.align-items-center h1") as HTMLElement;
         const name = el.innerHTML.split(", ")[1].split("!")[0];
         const avatar = (document.querySelector(".userpicture") as HTMLImageElement).src!.replace("f2", "f1");
 
